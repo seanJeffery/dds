@@ -1,2 +1,2 @@
 # dds
-Deadline Driven Scheduler
+FreeRTOS Deadline Driven Scheduler
