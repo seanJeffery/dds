@@ -45,4 +45,9 @@ void delete_dd_task(uint32_t task_id);
  */
 **dd_task_list get_completed_dd_task_list(void);
 
+/*
+ * Send the overdue task list to a queue.
+ */
+**dd_task_list get_overdue_dd_task_list(void);
+
 #endif /* DDS_INTERFACE_H */
