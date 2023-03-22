@@ -16,4 +16,7 @@ void create_dd_task( TaskHandle_t t_handle,
 
 }
 
+void delete_dd_task(uint32_t task_id) {
+
+}
 
