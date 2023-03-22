@@ -155,18 +155,29 @@ functionality.
  */
 static void prvSetupHardware( void );
 
+/* Extracts information from the DDS and reports scheduling information. */
 static void MonitorTask( void *pvParameters );
+
+/* Implements the EDF algorithm and controls the priorities of user-defined F-tasks from DD-task list. */
 static void DDSTask( void *pvParameters );
+
+/* User defined deadline-sensitive application code 0. */
 static void UserTask0( void *pvParameters );
+
+/* User defined deadline-sensitive application code 1. */
 static void UserTask1( void *pvParameters );
+
+/* User defined deadline-sensitive application code 2. */
 static void UserTask2( void *pvParameters );
+
+/* Periodically creates DD-tasks that are scheduled by the DDS */
 static void DDSGenTask( void *pvParameters );
 
 #define DDS_TASK_PRIO	 	4
 #define MONITOR_TASK_PRIO   4
-#define USER0_TASK_PRIO	 	4
-#define USER1_TASK_PRIO	 	4
-#define USER2_TASK_PRIO	 	4
+#define USER0_TASK_PRIO	 	4	// Subject to change by the DDS
+#define USER1_TASK_PRIO	 	4	// Subject to change by the DDS
+#define USER2_TASK_PRIO	 	4	// Subject to change by the DDS
 #define DDSGEN_TASK_PRIO  	4
 
 #define ExampleQueue_QUEUE_LENGTH  1
