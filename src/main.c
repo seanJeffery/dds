@@ -156,6 +156,7 @@ functionality.
 static void prvSetupHardware( void );
 
 static void MonitorTask( void *pvParameters );
+static void DDSTask( void *pvParameters );
 
 #define ExampleQueue_QUEUE_LENGTH  1
 xQueueHandle xQueueHandle_ExampleQueue = 0;
@@ -184,6 +185,7 @@ int main(void)
 	/* Add to the registry, for the benefit of kernel aware debugging. */
 	vQueueAddToRegistry(xQueueHandle_ExampleQueue, "ExampleQueue" );
 
+	xTaskCreate(DDSTask	   , "DDSTask"	  , configMINIMAL_STACK_SIZE, NULL, 4, NULL);
 	xTaskCreate(MonitorTask, "MonitorTask", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
 
 	xTimerHandle_ExampleTimer = xTimerCreate("ExampleTimer", 1000, pdFALSE, 0, vTimerCallback);
@@ -199,6 +201,15 @@ int main(void)
 /*-----------------------------------------------------------*/
 
 static void MonitorTask( void *pvParameters )
+{
+	while(1)
+	{
+	}
+}
+
+/*-----------------------------------------------------------*/
+
+static void DDSTask( void *pvParameters )
 {
 	while(1)
 	{
