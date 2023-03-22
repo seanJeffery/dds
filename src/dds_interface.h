@@ -19,7 +19,10 @@
 
 /* Other includes. */
 
-
+/*
+ * Assigns a release time to a new DD-task, adds it to the active list,
+ * sort the list by the deadline, and set the priorities of the user defined tasks.
+ */
 void create_dd_task( TaskHandle_t t_handle,
 					 task_type type,
 					 uint32_t task_id,
