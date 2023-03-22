@@ -146,6 +146,8 @@ functionality.
 #include "../FreeRTOS_Source/include/semphr.h"
 #include "../FreeRTOS_Source/include/task.h"
 #include "../FreeRTOS_Source/include/timers.h"
+/* Other includes */
+#include "dds_interface.h"
 
 /*-----------------------------------------------------------*/
 
