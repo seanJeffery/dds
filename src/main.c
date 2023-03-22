@@ -160,6 +160,7 @@ static void DDSTask( void *pvParameters );
 static void UserTask0( void *pvParameters );
 static void UserTask1( void *pvParameters );
 static void UserTask2( void *pvParameters );
+static void DDSGenTask( void *pvParameters );
 
 #define ExampleQueue_QUEUE_LENGTH  1
 xQueueHandle xQueueHandle_ExampleQueue = 0;
@@ -193,6 +194,7 @@ int main(void)
 	xTaskCreate(UserTask0  , "UserTask0"  , configMINIMAL_STACK_SIZE, NULL, 4, NULL);
 	xTaskCreate(UserTask1  , "UserTask1"  , configMINIMAL_STACK_SIZE, NULL, 4, NULL);
 	xTaskCreate(UserTask2  , "UserTask2"  , configMINIMAL_STACK_SIZE, NULL, 4, NULL);
+	xTaskCreate(DDSGenTask , "DDSGenTask" , configMINIMAL_STACK_SIZE, NULL, 4, NULL);
 
 	xTimerHandle_ExampleTimer = xTimerCreate("ExampleTimer", 1000, pdFALSE, 0, vTimerCallback);
 	xTimerStart(xTimerHandle_ExampleTimer, 1000);
@@ -243,6 +245,15 @@ static void UserTask1( void *pvParameters )
 /*-----------------------------------------------------------*/
 
 static void UserTask2( void *pvParameters )
+{
+	while(1)
+	{
+	}
+}
+
+/*-----------------------------------------------------------*/
+
+static void DDSGenTask( void *pvParameters )
 {
 	while(1)
 	{
