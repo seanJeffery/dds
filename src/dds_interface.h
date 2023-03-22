@@ -35,4 +35,6 @@ void create_dd_task( TaskHandle_t t_handle,
  */
 void delete_dd_task(uint32_t task_id);
 
+**dd_task_list get_active_dd_task_list(void);
+
 #endif /* DDS_INTERFACE_H */
