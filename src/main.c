@@ -162,6 +162,13 @@ static void UserTask1( void *pvParameters );
 static void UserTask2( void *pvParameters );
 static void DDSGenTask( void *pvParameters );
 
+#define DDS_TASK_PRIO	 	4
+#define MONITOR_TASK_PRIO   4
+#define USER0_TASK_PRIO	 	4
+#define USER1_TASK_PRIO	 	4
+#define USER2_TASK_PRIO	 	4
+#define DDSGEN_TASK_PRIO  	4
+
 #define ExampleQueue_QUEUE_LENGTH  1
 xQueueHandle xQueueHandle_ExampleQueue = 0;
 
@@ -189,12 +196,12 @@ int main(void)
 	/* Add to the registry, for the benefit of kernel aware debugging. */
 	vQueueAddToRegistry(xQueueHandle_ExampleQueue, "ExampleQueue" );
 
-	xTaskCreate(DDSTask	   , "DDSTask"	  , configMINIMAL_STACK_SIZE, NULL, 4, NULL);
-	xTaskCreate(MonitorTask, "MonitorTask", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
-	xTaskCreate(UserTask0  , "UserTask0"  , configMINIMAL_STACK_SIZE, NULL, 4, NULL);
-	xTaskCreate(UserTask1  , "UserTask1"  , configMINIMAL_STACK_SIZE, NULL, 4, NULL);
-	xTaskCreate(UserTask2  , "UserTask2"  , configMINIMAL_STACK_SIZE, NULL, 4, NULL);
-	xTaskCreate(DDSGenTask , "DDSGenTask" , configMINIMAL_STACK_SIZE, NULL, 4, NULL);
+	xTaskCreate(DDSTask	   , "DDSTask"	  , configMINIMAL_STACK_SIZE, NULL, DDS_TASK_PRIO	 , NULL);
+	xTaskCreate(MonitorTask, "MonitorTask", configMINIMAL_STACK_SIZE, NULL, MONITOR_TASK_PRIO, NULL);
+	xTaskCreate(UserTask0  , "UserTask0"  , configMINIMAL_STACK_SIZE, NULL, USER0_TASK_PRIO	 , NULL);
+	xTaskCreate(UserTask1  , "UserTask1"  , configMINIMAL_STACK_SIZE, NULL, USER1_TASK_PRIO	 , NULL);
+	xTaskCreate(UserTask2  , "UserTask2"  , configMINIMAL_STACK_SIZE, NULL, USER2_TASK_PRIO	 , NULL);
+	xTaskCreate(DDSGenTask , "DDSGenTask" , configMINIMAL_STACK_SIZE, NULL, DDSGEN_TASK_PRIO , NULL);
 
 	xTimerHandle_ExampleTimer = xTimerCreate("ExampleTimer", 1000, pdFALSE, 0, vTimerCallback);
 	xTimerStart(xTimerHandle_ExampleTimer, 1000);
