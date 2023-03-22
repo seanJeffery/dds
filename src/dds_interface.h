@@ -29,4 +29,10 @@ void create_dd_task( TaskHandle_t t_handle,
 					 uint32_t absolute_deadline
 					);
 
+/*
+ * Assign a completion time to finished DD-task, remove it from active task list,
+ * add to the completed task list. Also sorts active task list and sets user defined task priority.
+ */
+void delete_dd_task(uint32_t task_id);
+
 #endif /* DDS_INTERFACE_H */
