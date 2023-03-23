@@ -9,28 +9,27 @@
 #define DD_SCHEDULER_H_
 
 
-	enum task_type{
+	typedef enum {
 
 		PERIODIC,
 		APERIODIC
 
-		};
+	} task_type;
 
-	struct DD_task{
+	typedef struct {
 
 		task_type type;
 		uint32_t task_id;
 		uint32_t release_time;
 		uint32_t absolute_deadline;
 		uint32_t completion_time;
-		};
 
-	struct DD_task_list{
+	} DD_task;
 
+	typedef struct {
 		DD_task task;
 	    struct DD_task_list *next_task;
 
-
-	};
+	} DD_task_list;
 
 #endif /* DD_SCHEDULER_H_ */
