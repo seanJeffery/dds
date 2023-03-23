@@ -5,8 +5,15 @@
  *      Author: seanj
  */
 
+/* FreeRTOS includes*/
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+
+/* Other includes */
 #include "dds_interface.h"
 #include "DD_Scheduler.h"
+#include "my_queues.h"
 
 void create_dd_task( TaskHandle_t t_handle,
 					 task_type type,
@@ -15,7 +22,16 @@ void create_dd_task( TaskHandle_t t_handle,
 					)
 {
 
+	// Build struct to be placed on the create dd task queue
+	create_dd_task_struct dd_task = {
+			t_handle,
+			type,
+			task_id,
+			absolute_deadline
+	};
 
+	// Send the dd task creation data to the dds
+	xQueueSend(xQueueHandle_CreateDDTaskQueue, &dd_task, 1000);
 }
 
 void delete_dd_task(uint32_t task_id) {
