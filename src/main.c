@@ -173,11 +173,11 @@ static void UserTask2( void *pvParameters );
 /* Periodically creates DD-tasks that are scheduled by the DDS */
 static void DDSGenTask( void *pvParameters );
 
-#define DDS_TASK_PRIO	 	4
-#define MONITOR_TASK_PRIO   4
-#define USER0_TASK_PRIO	 	4	// Subject to change by the DDS
-#define USER1_TASK_PRIO	 	4	// Subject to change by the DDS
-#define USER2_TASK_PRIO	 	4	// Subject to change by the DDS
+#define DDS_TASK_PRIO	 	5
+#define MONITOR_TASK_PRIO   3
+#define USER0_TASK_PRIO	 	0	// Subject to change by the DDS
+#define USER1_TASK_PRIO	 	1	// Subject to change by the DDS
+#define USER2_TASK_PRIO	 	2	// Subject to change by the DDS
 #define DDSGEN_TASK_PRIO  	4
 
 #define ExampleQueue_QUEUE_LENGTH  1
