@@ -182,7 +182,45 @@ static void DDSGenTask( void *pvParameters );
 #define USER2_TASK_PRIO	 	2	// Subject to change by the DDS
 #define DDSGEN_TASK_PRIO  	4
 
+// Uncomment one of these to try different testbenches
+#define TB1
+//#define TB2
+//#define TB3
+
+#ifdef TB1
+
+	#define USER0_EXEC_TIME		95
+	#define USER1_EXEC_TIME 	150
+	#define USER2_EXEC_TIME 	250
+
+	#define USER0_PERIOD 		500
+	#define USER1_PERIOD 		500
+	#define USER2_PERIOD		750
+
+#elif defined(TB2)
+
+	#define USER0_EXEC_TIME		95
+	#define USER1_EXEC_TIME 	150
+	#define USER2_EXEC_TIME 	250
+
+	#define USER0_PERIOD 		250
+	#define USER1_PERIOD 		500
+	#define USER2_PERIOD		750
+
+#elif defined(TB3)
+
+	#define USER0_EXEC_TIME		100
+	#define USER1_EXEC_TIME 	200
+	#define USER2_EXEC_TIME 	200
+
+	#define USER0_PERIOD 		500
+	#define USER1_PERIOD 		500
+	#define USER2_PERIOD		500
+
+#endif
+
 #define CreateDDTaskQueue_QUEUE_LENGTH  1
+
 xQueueHandle xQueueHandle_CreateDDTaskQueue = 0;
 
 xTimerHandle xTimerHandle_ExampleTimer = 0;
@@ -251,6 +289,13 @@ static void UserTask0( void *pvParameters )
 {
 	while(1)
 	{
+		/* Spin in an empty loop for the execution time */
+		TickType_t start_ticks = xTaskGetTickCount();
+		while( (TickType_t)(start_ticks - xTaskGetTickCount()) < USER0_EXEC_TIME );
+
+		/* Get the task in the front of the list and delete it */
+		DD_task_list * head = get_active_dd_task_list();
+		delete_dd_task(head->task.task_id);
 	}
 }
 
@@ -260,6 +305,13 @@ static void UserTask1( void *pvParameters )
 {
 	while(1)
 	{
+		/* Spin in an empty loop for the execution time */
+		TickType_t start_ticks = xTaskGetTickCount();
+		while( (TickType_t)(start_ticks - xTaskGetTickCount()) < USER1_EXEC_TIME );
+
+		/* Get the task in the front of the list and delete it */
+		DD_task_list * head = get_active_dd_task_list();
+		delete_dd_task(head->task.task_id);
 	}
 }
 
@@ -269,6 +321,13 @@ static void UserTask2( void *pvParameters )
 {
 	while(1)
 	{
+		/* Spin in an empty loop for the execution time */
+		TickType_t start_ticks = xTaskGetTickCount();
+		while( (TickType_t)(start_ticks - xTaskGetTickCount()) < USER2_EXEC_TIME );
+
+		/* Get the task in the front of the list and delete it */
+		DD_task_list * head = get_active_dd_task_list();
+		delete_dd_task(head->task.task_id);
 	}
 }
 
