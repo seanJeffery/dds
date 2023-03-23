@@ -18,6 +18,7 @@
 #include "task.h"
 
 /* Other includes. */
+#include "DD_Scheduler.h"
 
 /*
  * Assigns a release time to a new DD-task, adds it to the active list,
@@ -38,16 +39,16 @@ void delete_dd_task(uint32_t task_id);
 /*
  * Send the active task list to a queue.
  */
-**dd_task_list get_active_dd_task_list(void);
+DD_task_list * get_active_dd_task_list(void);
 
 /*
  * Send the completed task list to a queue.
  */
-**dd_task_list get_completed_dd_task_list(void);
+DD_task_list * get_completed_dd_task_list(void);
 
 /*
  * Send the overdue task list to a queue.
  */
-**dd_task_list get_overdue_dd_task_list(void);
+DD_task_list * get_overdue_dd_task_list(void);
 
 #endif /* DDS_INTERFACE_H */

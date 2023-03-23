@@ -6,6 +6,7 @@
  */
 
 #include "dds_interface.h"
+#include "DD_Scheduler.h"
 
 void create_dd_task( TaskHandle_t t_handle,
 					 task_type type,
@@ -14,20 +15,21 @@ void create_dd_task( TaskHandle_t t_handle,
 					)
 {
 
+
 }
 
 void delete_dd_task(uint32_t task_id) {
 
 }
 
-**dd_task_list get_active_dd_task_list(void) {
+DD_task_list * get_active_dd_task_list(void) {
 
 }
 
-**dd_task_list get_completed_dd_task_list(void) {
+DD_task_list * get_completed_dd_task_list(void) {
 
 }
 
-**dd_task_list get_overdue_dd_task_list(void) {
+DD_task_list * get_overdue_dd_task_list(void) {
 
 }
