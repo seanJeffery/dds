@@ -182,8 +182,8 @@ static void DDSGenTask( void *pvParameters );
 #define USER2_TASK_PRIO	 	2	// Subject to change by the DDS
 #define DDSGEN_TASK_PRIO  	4
 
-#define ExampleQueue_QUEUE_LENGTH  1
-xQueueHandle xQueueHandle_ExampleQueue = 0;
+#define CreateDDTaskQueue_QUEUE_LENGTH  1
+xQueueHandle xQueueHandle_CreateDDTaskQueue = 0;
 
 xTimerHandle xTimerHandle_ExampleTimer = 0;
 
@@ -203,11 +203,11 @@ int main(void)
 
 	/* Create the queue used by the queue send and queue receive tasks.
 	http://www.freertos.org/a00116.html */
-	xQueueHandle_ExampleQueue = xQueueCreate( ExampleQueue_QUEUE_LENGTH,	/* The number of items the queue can hold. */
-											  sizeof(uint8_t) );			/* The size of each item the queue holds. */
+	xQueueHandle_CreateDDTaskQueue = xQueueCreate( CreateDDTaskQueue_QUEUE_LENGTH,	/* The number of items the queue can hold. */
+											  sizeof(create_dd_task_struct) );			/* The size of each item the queue holds. */
 														
 	/* Add to the registry, for the benefit of kernel aware debugging. */
-	vQueueAddToRegistry(xQueueHandle_ExampleQueue, "ExampleQueue" );
+	vQueueAddToRegistry(xQueueHandle_CreateDDTaskQueue, "CreateDDTaskQueue" );
 
 	xTaskCreate(DDSTask	   , "DDSTask"	  , configMINIMAL_STACK_SIZE, NULL, DDS_TASK_PRIO	 , NULL);
 	xTaskCreate(MonitorTask, "MonitorTask", configMINIMAL_STACK_SIZE, NULL, MONITOR_TASK_PRIO, NULL);
@@ -241,6 +241,7 @@ static void DDSTask( void *pvParameters )
 {
 	while(1)
 	{
+
 	}
 }
 

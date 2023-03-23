@@ -20,6 +20,13 @@
 /* Other includes. */
 #include "DD_Scheduler.h"
 
+typedef struct {
+	TaskHandle_t t_handle;
+	task_type type;
+	uint32_t task_id;
+	uint32_t absolute_deadline;
+} create_dd_task_struct;
+
 /*
  * Assigns a release time to a new DD-task, adds it to the active list,
  * sort the list by the deadline, and set the priorities of the user defined tasks.
