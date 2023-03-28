@@ -5,8 +5,8 @@
  *      Author: williambowen
  */
 
-#ifndef DD_SCHEDULER_H_
-#define DD_SCHEDULER_H_
+#ifndef DD_TASK_LIST_H_
+#define DD_TASK_LIST_H_
 
 
 	typedef enum {
@@ -24,12 +24,15 @@
 		uint32_t absolute_deadline;
 		uint32_t completion_time;
 
-	} DD_task;
+	} dd_task;
 
 	typedef struct {
-		DD_task task;
-	    struct DD_task_list *next_task;
 
-	} DD_task_list;
+		uint32_t length;
+		dd_task* head;
+		dd_task* tail;
 
-#endif /* DD_SCHEDULER_H_ */
+	} dd_task_list;
+
+
+#endif /* DD_TASK_LIST_H_ */
