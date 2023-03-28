@@ -219,9 +219,11 @@ static void DDSGenTask( void *pvParameters );
 
 #endif
 
-#define CreateDDTaskQueue_QUEUE_LENGTH  1
+#define CreateDDTaskQueue_QUEUE_LENGTH  4
+#define TimerExpiredQueue_QUEUE_LENGTH  4
 
 xQueueHandle xQueueHandle_CreateDDTaskQueue = 0;
+xQueueHandle xQueueHandle_TimerExpiredQueue = 0;
 
 xTaskHandle xTaskHandle_DDSGenTask = 0; // Need handle so that timer callback can resume the task
 
@@ -260,11 +262,14 @@ int main(void)
 	/* Create the queue used by the queue send and queue receive tasks.
 	http://www.freertos.org/a00116.html */
 	xQueueHandle_CreateDDTaskQueue = xQueueCreate( CreateDDTaskQueue_QUEUE_LENGTH,	/* The number of items the queue can hold. */
-											  	   sizeof(create_dd_task_struct) );			/* The size of each item the queue holds. */
+											  	   sizeof(create_dd_task_struct) );	/* The size of each item the queue holds. */
+
+	xQueueHandle_TimerExpiredQueue = xQueueCreate( TimerExpiredQueue_QUEUE_LENGTH,	/* The number of items the queue can hold. */
+											  	   sizeof(uint8_t) );				/* The size of each item the queue holds. */
 														
 	/* Add to the registry, for the benefit of kernel aware debugging. */
 	vQueueAddToRegistry(xQueueHandle_CreateDDTaskQueue, "CreateDDTaskQueue" );
-
+	vQueueAddToRegistry(xQueueHandle_TimerExpiredQueue, "TimerExpiredQueue" );
 
 	xTaskCreate(DDSTask	   , "DDSTask"	  , configMINIMAL_STACK_SIZE, NULL, DDS_TASK_PRIO	 , NULL);
 	xTaskCreate(MonitorTask, "MonitorTask", configMINIMAL_STACK_SIZE, NULL, MONITOR_TASK_PRIO, NULL);
@@ -361,6 +366,7 @@ static void DDSGenTask( void *pvParameters )
 {
 	while(1)
 	{
+
 		vTaskSuspend(NULL); // Suspend the generator
 	}
 }
