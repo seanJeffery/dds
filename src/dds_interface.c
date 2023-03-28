@@ -6,13 +6,13 @@
  */
 
 /* FreeRTOS includes*/
+#include <dd_task_list.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 
 /* Other includes */
 #include "dds_interface.h"
-#include "DD_Scheduler.h"
 #include "my_queues.h"
 
 void create_dd_task( TaskHandle_t t_handle,

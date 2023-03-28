@@ -11,6 +11,7 @@
 #ifndef DDS_INTERFACE_H
 #define DDS_INTERFACE_H
 
+#include <dd_task_list.h>
 #include <stdint.h>
 
 /* FreeRTOS includes */
@@ -18,7 +19,6 @@
 #include "task.h"
 
 /* Other includes. */
-#include "DD_Scheduler.h"
 
 typedef struct {
 	TaskHandle_t t_handle;

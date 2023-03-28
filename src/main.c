@@ -8,7 +8,7 @@
 
     FreeRTOS is free software; you can redistribute it and/or modify it under
     the terms of the GNU General Public License (version 2) as published by the
-    Free Software Foundation >>>> AND MODIFIED BY <<<< the FreeRTOS exception.
+    Free Software Foundation >>>> AND MODIFIED BY <<<< the FreeRTOS exceptio
 
     ***************************************************************************
     >>!   NOTE: The modification to the GPL is included to allow you to     !<<
@@ -238,6 +238,7 @@ int main(void)
 	/* Configure the system ready to run the demo.  The clock configuration
 	can be done here if it was not done before main() was called. */
 	prvSetupHardware();
+	init_dd_scheduler();
 
 	/* Create the queue used by the queue send and queue receive tasks.
 	http://www.freertos.org/a00116.html */
