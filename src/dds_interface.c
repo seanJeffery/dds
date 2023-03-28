@@ -24,10 +24,10 @@ void create_dd_task( TaskHandle_t t_handle,
 
 	// Build struct to be placed on the create dd task queue
 	create_dd_task_struct dd_task = {
-			t_handle,
-			type,
-			task_id,
-			absolute_deadline
+		t_handle,
+		type,
+		task_id,
+		absolute_deadline
 	};
 
 	// Send the dd task creation data to the dds

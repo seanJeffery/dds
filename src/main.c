@@ -293,9 +293,9 @@ static void UserTask0( void *pvParameters )
 		TickType_t start_ticks = xTaskGetTickCount();
 		while( (TickType_t)(start_ticks - xTaskGetTickCount()) < USER0_EXEC_TIME );
 
-		/* Get the task in the front of the list and delete it */
-		DD_task_list * head = get_active_dd_task_list();
-		delete_dd_task(head->task.task_id);
+		/* Dereference pvParameters to get the dd task id that was passed to this function */
+		uint32_t dd_task_id = (uint32_t)*pvParameters;
+		delete_dd_task(dd_task_id);
 	}
 }
 
@@ -309,9 +309,9 @@ static void UserTask1( void *pvParameters )
 		TickType_t start_ticks = xTaskGetTickCount();
 		while( (TickType_t)(start_ticks - xTaskGetTickCount()) < USER1_EXEC_TIME );
 
-		/* Get the task in the front of the list and delete it */
-		DD_task_list * head = get_active_dd_task_list();
-		delete_dd_task(head->task.task_id);
+		/* Dereference pvParameters to get the dd task id that was passed to this function */
+		uint32_t dd_task_id = (uint32_t)*pvParameters;
+		delete_dd_task(dd_task_id);
 	}
 }
 
@@ -325,9 +325,9 @@ static void UserTask2( void *pvParameters )
 		TickType_t start_ticks = xTaskGetTickCount();
 		while( (TickType_t)(start_ticks - xTaskGetTickCount()) < USER2_EXEC_TIME );
 
-		/* Get the task in the front of the list and delete it */
-		DD_task_list * head = get_active_dd_task_list();
-		delete_dd_task(head->task.task_id);
+		/* Dereference pvParameters to get the dd task id that was passed to this function */
+		uint32_t dd_task_id = (uint32_t)*pvParameters;
+		delete_dd_task(dd_task_id);
 	}
 }
 
