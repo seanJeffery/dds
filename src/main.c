@@ -294,7 +294,7 @@ static void UserTask0( void *pvParameters )
 		while( (TickType_t)(start_ticks - xTaskGetTickCount()) < USER0_EXEC_TIME );
 
 		/* Dereference pvParameters to get the dd task id that was passed to this function */
-		uint32_t dd_task_id = (uint32_t)*pvParameters;
+		uint32_t dd_task_id = (uint32_t)pvParameters;
 		delete_dd_task(dd_task_id);
 	}
 }
@@ -310,7 +310,7 @@ static void UserTask1( void *pvParameters )
 		while( (TickType_t)(start_ticks - xTaskGetTickCount()) < USER1_EXEC_TIME );
 
 		/* Dereference pvParameters to get the dd task id that was passed to this function */
-		uint32_t dd_task_id = (uint32_t)*pvParameters;
+		uint32_t dd_task_id = (uint32_t)pvParameters;
 		delete_dd_task(dd_task_id);
 	}
 }
@@ -326,7 +326,7 @@ static void UserTask2( void *pvParameters )
 		while( (TickType_t)(start_ticks - xTaskGetTickCount()) < USER2_EXEC_TIME );
 
 		/* Dereference pvParameters to get the dd task id that was passed to this function */
-		uint32_t dd_task_id = (uint32_t)*pvParameters;
+		uint32_t dd_task_id = (uint32_t)pvParameters;
 		delete_dd_task(dd_task_id);
 	}
 }
