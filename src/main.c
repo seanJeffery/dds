@@ -223,12 +223,29 @@ static void DDSGenTask( void *pvParameters );
 
 xQueueHandle xQueueHandle_CreateDDTaskQueue = 0;
 
-xTimerHandle xTimerHandle_ExampleTimer = 0;
+xTaskHandle xTaskHandle_DDSGenTask = 0; // Need handle so that timer callback can resume the task
+
+xTimerHandle xTimerHandle_User0Timer = 0;
+xTimerHandle xTimerHandle_User1Timer = 0;
+xTimerHandle xTimerHandle_User2Timer = 0;
 
 /*-----------------------------------------------------------*/
 
 void vTimerCallback(TimerHandle_t xTimer){
-	
+
+	if(xTimer == xTimerHandle_User0Timer) {
+
+	}
+
+	if(xTimer == xTimerHandle_User1Timer) {
+
+	}
+
+	if(xTimer == xTimerHandle_User2Timer) {
+
+	}
+
+	vTaskResume(xTaskHandle_DDSGenTask);
 };
 
 /*-----------------------------------------------------------*/
@@ -243,20 +260,26 @@ int main(void)
 	/* Create the queue used by the queue send and queue receive tasks.
 	http://www.freertos.org/a00116.html */
 	xQueueHandle_CreateDDTaskQueue = xQueueCreate( CreateDDTaskQueue_QUEUE_LENGTH,	/* The number of items the queue can hold. */
-											  sizeof(create_dd_task_struct) );			/* The size of each item the queue holds. */
+											  	   sizeof(create_dd_task_struct) );			/* The size of each item the queue holds. */
 														
 	/* Add to the registry, for the benefit of kernel aware debugging. */
 	vQueueAddToRegistry(xQueueHandle_CreateDDTaskQueue, "CreateDDTaskQueue" );
+
 
 	xTaskCreate(DDSTask	   , "DDSTask"	  , configMINIMAL_STACK_SIZE, NULL, DDS_TASK_PRIO	 , NULL);
 	xTaskCreate(MonitorTask, "MonitorTask", configMINIMAL_STACK_SIZE, NULL, MONITOR_TASK_PRIO, NULL);
 	xTaskCreate(UserTask0  , "UserTask0"  , configMINIMAL_STACK_SIZE, NULL, USER0_TASK_PRIO	 , NULL);
 	xTaskCreate(UserTask1  , "UserTask1"  , configMINIMAL_STACK_SIZE, NULL, USER1_TASK_PRIO	 , NULL);
 	xTaskCreate(UserTask2  , "UserTask2"  , configMINIMAL_STACK_SIZE, NULL, USER2_TASK_PRIO	 , NULL);
-	xTaskCreate(DDSGenTask , "DDSGenTask" , configMINIMAL_STACK_SIZE, NULL, DDSGEN_TASK_PRIO , NULL);
+	xTaskCreate(DDSGenTask , "DDSGenTask" , configMINIMAL_STACK_SIZE, NULL, DDSGEN_TASK_PRIO , xTaskHandle_DDSGenTask);
 
-	xTimerHandle_ExampleTimer = xTimerCreate("ExampleTimer", 1000, pdFALSE, 0, vTimerCallback);
-	xTimerStart(xTimerHandle_ExampleTimer, 1000);
+	xTimerHandle_User0Timer = xTimerCreate("User0Timer", USER0_PERIOD, pdFALSE, 0, vTimerCallback);
+	xTimerHandle_User1Timer = xTimerCreate("User1Timer", USER1_PERIOD, pdFALSE, 0, vTimerCallback);
+	xTimerHandle_User2Timer = xTimerCreate("User2Timer", USER2_PERIOD, pdFALSE, 0, vTimerCallback);
+
+	xTimerStart(xTimerHandle_User0Timer, 1000);
+	xTimerStart(xTimerHandle_User1Timer, 1000);
+	xTimerStart(xTimerHandle_User2Timer, 1000);
 
 	/* Start the tasks and timer running. */
 	vTaskStartScheduler();
@@ -338,6 +361,7 @@ static void DDSGenTask( void *pvParameters )
 {
 	while(1)
 	{
+		vTaskSuspend(NULL); // Suspend the generator
 	}
 }
 
