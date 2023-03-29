@@ -8,31 +8,32 @@
 #ifndef DD_TASK_LIST_H_
 #define DD_TASK_LIST_H_
 
+#include <stdint.h>
 
-	typedef enum {
+typedef enum {
 
-		PERIODIC,
-		APERIODIC
+	PERIODIC,
+	APERIODIC
 
-	} task_type;
+} task_type;
 
-	typedef struct {
+typedef struct {
 
-		task_type type;
-		uint32_t task_id;
-		uint32_t release_time;
-		uint32_t absolute_deadline;
-		uint32_t completion_time;
+	task_type type;
+	uint32_t task_id;
+	uint32_t release_time;
+	uint32_t absolute_deadline;
+	uint32_t completion_time;
 
-	} dd_task;
+} dd_task;
 
-	typedef struct {
+typedef struct {
 
-		uint32_t length;
-		dd_task* head;
-		dd_task* tail;
+	uint32_t length;
+	dd_task* head;
+	dd_task* tail;
 
-	} dd_task_list;
+} dd_task_list;
 
 
 #endif /* DD_TASK_LIST_H_ */

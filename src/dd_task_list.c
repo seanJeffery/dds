@@ -5,22 +5,19 @@
  *      Author: williambowen
  */
 
+#include <stdlib.h>
 #include "dd_task_list.h"
 
 //initialize list values
-void init_tasklist( dd_task* list )
+void init_tasklist( dd_task_list* list )
 {
-
-	if( list != NULL ){ //check input is not empty
-
-
-    list->length = 0;
-    list->head = NULL;
-    list->tail = NULL;
-
-	}else{
-
-		printf("error: list is empty");
-		return;
-
+	if( list != NULL ) { //check input is not empty
+		list->length = 0;
+		list->head = NULL;
+		list->tail = NULL;
 	}
+	else{
+//		printf("error: list is empty");
+		return;
+	}
+}

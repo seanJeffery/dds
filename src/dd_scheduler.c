@@ -4,17 +4,19 @@
  *  Created on: Mar 25, 2023
  *      Author: williambowen
  */
-		dd_task_list active_list;
-		dd_task_list overdue_list;
+
+#include <stdlib.h>
+#include "dd_task_list.h"
+#include "dd_scheduler.h"
+
+dd_task_list active_list;
+dd_task_list overdue_list;
 
 
-	void init_dd_scheduler(){
-
-		init_tasklist(&active_list); //make an active list
-		init_tasklist(&overdue_list); //make an overdue list
-
-
-	}
+void init_dd_scheduler(){
+	init_tasklist(&active_list); //make an active list
+	init_tasklist(&overdue_list); //make an overdue list
+}
 
 // dd_scheduler
 
@@ -28,9 +30,7 @@
 	 // -> provide data for the monitor task
 
 	void dd_scheduler(){
-
 		dd_task* task_for_scheduling = NULL;
 
 		//if xqueuerecieve.... wait for something on queue
-
 	}
