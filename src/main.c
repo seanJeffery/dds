@@ -177,7 +177,7 @@ static void UserTask2( void *pvParameters );
 /* Periodically creates DD-tasks that are scheduled by the DDS */
 static void DDSGenTask( void *pvParameters );
 
-#define DDS_TASK_PRIO	 	5
+#define DDS_TASK_PRIO	 	0
 #define MONITOR_TASK_PRIO   3
 #define USER0_TASK_PRIO	 	0	// Subject to change by the DDS
 #define USER1_TASK_PRIO	 	0	// Subject to change by the DDS
@@ -234,6 +234,7 @@ xQueueHandle xQueueHandle_GetTaskListQueue = 0;
 xQueueHandle xQueueHandle_TaskListQueue = 0;
 
 xTaskHandle xTaskHandle_DDSGenTask = 0; // Need handle so that timer callback can resume the task
+xTaskHandle xTaskHandle_DDSTask = 0;
 
 xTimerHandle xTimerHandle_User0Timer = 0;
 xTimerHandle xTimerHandle_User1Timer = 0;
@@ -295,11 +296,12 @@ int main(void)
 	vQueueAddToRegistry(xQueueHandle_GetTaskListQueue , "GetTaskListQueue"  );
 	vQueueAddToRegistry(xQueueHandle_TaskListQueue 	  , "TaskListQueue"     );
 
-	xTaskCreate(DDSTask	   , "DDSTask"	  , configMINIMAL_STACK_SIZE, NULL, DDS_TASK_PRIO	 , NULL);
+	xTaskCreate(DDSTask	   , "DDSTask"	  , configMINIMAL_STACK_SIZE, NULL, DDS_TASK_PRIO	 , &xTaskHandle_DDSTask);
 	xTaskCreate(MonitorTask, "MonitorTask", configMINIMAL_STACK_SIZE, NULL, MONITOR_TASK_PRIO, NULL);
 	xTaskCreate(DDSGenTask , "DDSGenTask" , configMINIMAL_STACK_SIZE, NULL, DDSGEN_TASK_PRIO , &xTaskHandle_DDSGenTask);
 
 	vTaskSuspend(xTaskHandle_DDSGenTask);
+	vTaskSuspend(xTaskHandle_DDSTask);
 
 	xTimerHandle_User0Timer = xTimerCreate("User0Timer", USER0_PERIOD, pdFALSE, 0, vTimerCallback);
 	xTimerHandle_User1Timer = xTimerCreate("User1Timer", USER1_PERIOD, pdFALSE, 0, vTimerCallback);
@@ -320,8 +322,29 @@ int main(void)
 
 static void MonitorTask( void *pvParameters )
 {
+	TickType_t xLastWakeTime;
+	const TickType_t xFrequency = 500;
+
+	xLastWakeTime = xTaskGetTickCount();
+
 	while(1)
 	{
+
+//		dd_task_list * active	 = get_active_dd_task_list();
+//		dd_task_list * completed = get_completed_dd_task_list();
+//		dd_task_list * overdue 	 = get_overdue_dd_task_list();
+
+		int num_active_tasks	 = 0;
+		int num_completed_tasks  = 0;
+		int num_overdue_tasks 	 = 0;
+
+		// Iterate through each dd_task_list and count them
+		printf("\n=========== MONITOR ===========\n");
+		printf("# active   : %d\n", num_active_tasks);
+		printf("# completed: %d\n", num_completed_tasks);
+		printf("# overdue  : %d\n", num_overdue_tasks);
+
+		vTaskDelayUntil( &xLastWakeTime, xFrequency );
 	}
 }
 
@@ -392,38 +415,38 @@ static void DDSGenTask( void *pvParameters )
 	{
 		int8_t expired_timer;
 
-		if(xQueueReceive(xQueueHandle_TimerExpiredQueue, &expired_timer, 1000)) {
-
-			uint32_t release_time = xTaskGetTickCount();
-			uint32_t absolute_deadline;
-
-			uint32_t id = task_id_count++;
-
-			xTaskHandle * handle = pvPortMalloc(sizeof(xTaskHandle));
-
-			switch(expired_timer) {
-			case 0: {
-				xTaskCreate(UserTask0, "UserTask0", configMINIMAL_STACK_SIZE, (void *)(id), USER0_TASK_PRIO, handle);
-				absolute_deadline = release_time + USER0_PERIOD;
-				break;
-			}
-			case 1: {
-				xTaskCreate(UserTask1, "UserTask1", configMINIMAL_STACK_SIZE, (void *)(id), USER1_TASK_PRIO, handle);
-				absolute_deadline = release_time + USER1_PERIOD;
-				break;
-			}
-			case 2: {
-				xTaskCreate(UserTask2, "UserTask2", configMINIMAL_STACK_SIZE, (void *)(id), USER2_TASK_PRIO, handle);
-				absolute_deadline = release_time + USER2_PERIOD;
-				break;
-			}
-			default:
-				break;
-			}
-
-			create_dd_task(*handle, PERIODIC, id, absolute_deadline);
-
-		}
+//		if(xQueueReceive(xQueueHandle_TimerExpiredQueue, &expired_timer, 1000)) {
+//
+//			uint32_t release_time = xTaskGetTickCount();
+//			uint32_t absolute_deadline;
+//
+//			uint32_t id = task_id_count++;
+//
+//			xTaskHandle * handle = pvPortMalloc(sizeof(xTaskHandle));
+//
+//			switch(expired_timer) {
+//			case 0: {
+//				xTaskCreate(UserTask0, "UserTask0", configMINIMAL_STACK_SIZE, (void *)(id), USER0_TASK_PRIO, handle);
+//				absolute_deadline = release_time + USER0_PERIOD;
+//				break;
+//			}
+//			case 1: {
+//				xTaskCreate(UserTask1, "UserTask1", configMINIMAL_STACK_SIZE, (void *)(id), USER1_TASK_PRIO, handle);
+//				absolute_deadline = release_time + USER1_PERIOD;
+//				break;
+//			}
+//			case 2: {
+//				xTaskCreate(UserTask2, "UserTask2", configMINIMAL_STACK_SIZE, (void *)(id), USER2_TASK_PRIO, handle);
+//				absolute_deadline = release_time + USER2_PERIOD;
+//				break;
+//			}
+//			default:
+//				break;
+//			}
+//
+//			create_dd_task(*handle, PERIODIC, id, absolute_deadline);
+//
+//		}
 		vTaskSuspend(NULL); // Suspend the generator
 	}
 }

@@ -15,6 +15,8 @@
 #include "dds_interface.h"
 #include "my_queues.h"
 
+extern TaskHandle_t xTaskHandle_DDSTask;
+
 void create_dd_task( TaskHandle_t t_handle,
 					 task_type type,
 					 uint32_t task_id,
@@ -32,18 +34,24 @@ void create_dd_task( TaskHandle_t t_handle,
 
 	// Send the dd task creation data to the dds
 	xQueueSend(xQueueHandle_CreateDDTaskQueue, &dd_task, 1000);
+	vTaskResume(xTaskHandle_DDSTask);
 }
 
 void delete_dd_task(uint32_t task_id) {
 	xQueueSend(xQueueHandle_DeleteDDTaskQueue, &task_id, 1000);
+	vTaskResume(xTaskHandle_DDSTask);
 }
 
 dd_task_list * get_active_dd_task_list(void) {
 	uint8_t list_type = active_task_list;
 	dd_task_list * list;
 	xQueueSend(xQueueHandle_GetTaskListQueue, &list_type, 1000);
+	vTaskResume(xTaskHandle_DDSTask);
 	if(xQueueReceive(xQueueHandle_TaskListQueue, &list, 1000)) {
 		return list;
+	}
+	else {
+		return 0;
 	}
 }
 
@@ -51,8 +59,12 @@ dd_task_list * get_completed_dd_task_list(void) {
 	uint8_t list_type = completed_task_list;
 	dd_task_list * list;
 	xQueueSend(xQueueHandle_GetTaskListQueue, &list_type, 1000);
+	vTaskResume(xTaskHandle_DDSTask);
 	if(xQueueReceive(xQueueHandle_TaskListQueue, &list, 1000)) {
 		return list;
+	}
+	else {
+		return 0;
 	}
 }
 
@@ -60,7 +72,11 @@ dd_task_list * get_overdue_dd_task_list(void) {
 	uint8_t list_type = overdue_task_list;
 	dd_task_list * list;
 	xQueueSend(xQueueHandle_GetTaskListQueue, &list_type, 1000);
+	vTaskResume(xTaskHandle_DDSTask);
 	if(xQueueReceive(xQueueHandle_TaskListQueue, &list, 1000)) {
 		return list;
+	}
+	else {
+		return 0;
 	}
 }
