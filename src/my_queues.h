@@ -18,5 +18,7 @@
 
 extern xQueueHandle xQueueHandle_CreateDDTaskQueue;
 extern xQueueHandle xQueueHandle_DeleteDDTaskQueue;
+extern xQueueHandle xQueueHandle_GetTaskListQueue;
+extern xQueueHandle xQueueHandle_TaskListQueue;
 
 #endif /* MY_QUEUES_H_ */

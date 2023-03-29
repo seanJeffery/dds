@@ -39,13 +39,28 @@ void delete_dd_task(uint32_t task_id) {
 }
 
 dd_task_list * get_active_dd_task_list(void) {
-
+	uint8_t list_type = active_task_list;
+	dd_task_list * list;
+	xQueueSend(xQueueHandle_GetTaskListQueue, &list_type, 1000);
+	if(xQueueReceive(xQueueHandle_TaskListQueue, &list, 1000)) {
+		return list;
+	}
 }
 
 dd_task_list * get_completed_dd_task_list(void) {
-
+	uint8_t list_type = completed_task_list;
+	dd_task_list * list;
+	xQueueSend(xQueueHandle_GetTaskListQueue, &list_type, 1000);
+	if(xQueueReceive(xQueueHandle_TaskListQueue, &list, 1000)) {
+		return list;
+	}
 }
 
 dd_task_list * get_overdue_dd_task_list(void) {
-
+	uint8_t list_type = overdue_task_list;
+	dd_task_list * list;
+	xQueueSend(xQueueHandle_GetTaskListQueue, &list_type, 1000);
+	if(xQueueReceive(xQueueHandle_TaskListQueue, &list, 1000)) {
+		return list;
+	}
 }

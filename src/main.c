@@ -224,10 +224,14 @@ static void DDSGenTask( void *pvParameters );
 #define CreateDDTaskQueue_QUEUE_LENGTH  4
 #define DeleteDDTaskQueue_QUEUE_LENGTH  4
 #define TimerExpiredQueue_QUEUE_LENGTH  4
+#define GetTaskListQueue_QUEUE_LENGTH   4
+#define TaskListQueue_QUEUE_LENGTH   	4
 
 xQueueHandle xQueueHandle_CreateDDTaskQueue = 0;
 xQueueHandle xQueueHandle_DeleteDDTaskQueue = 0;
 xQueueHandle xQueueHandle_TimerExpiredQueue = 0;
+xQueueHandle xQueueHandle_GetTaskListQueue = 0;
+xQueueHandle xQueueHandle_TaskListQueue = 0;
 
 xTaskHandle xTaskHandle_DDSGenTask = 0; // Need handle so that timer callback can resume the task
 
@@ -277,11 +281,19 @@ int main(void)
 
 	xQueueHandle_TimerExpiredQueue = xQueueCreate( TimerExpiredQueue_QUEUE_LENGTH,	/* The number of items the queue can hold. */
 											  	   sizeof(uint8_t) );				/* The size of each item the queue holds. */
-														
+
+	xQueueHandle_GetTaskListQueue = xQueueCreate( GetTaskListQueue_QUEUE_LENGTH,	/* The number of items the queue can hold. */
+											  	   sizeof(uint8_t) );				/* The size of each item the queue holds. */
+
+	xQueueHandle_TaskListQueue = xQueueCreate( TaskListQueue_QUEUE_LENGTH,	/* The number of items the queue can hold. */
+											  	   sizeof(dd_task_list *) );
+
 	/* Add to the registry, for the benefit of kernel aware debugging. */
 	vQueueAddToRegistry(xQueueHandle_CreateDDTaskQueue, "CreateDDTaskQueue" );
 	vQueueAddToRegistry(xQueueHandle_DeleteDDTaskQueue, "DeleteDDTaskQueue" );
 	vQueueAddToRegistry(xQueueHandle_TimerExpiredQueue, "TimerExpiredQueue" );
+	vQueueAddToRegistry(xQueueHandle_GetTaskListQueue , "GetTaskListQueue"  );
+	vQueueAddToRegistry(xQueueHandle_TaskListQueue 	  , "TaskListQueue"     );
 
 	xTaskCreate(DDSTask	   , "DDSTask"	  , configMINIMAL_STACK_SIZE, NULL, DDS_TASK_PRIO	 , NULL);
 	xTaskCreate(MonitorTask, "MonitorTask", configMINIMAL_STACK_SIZE, NULL, MONITOR_TASK_PRIO, NULL);
