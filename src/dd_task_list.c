@@ -11,11 +11,11 @@
 //initialize list values
 void init_tasklist( dd_task_list list )
 {
-	if( list != NULL ){ //check input is not empty
+	if( list.head != NULL ){ //check input is not empty
 
-    list->length = 0;
-    list->head = NULL;
-    list->tail = NULL;
+    list.length = 0;
+    list.head = NULL;
+    list.tail = NULL;
 
 	}else{
 

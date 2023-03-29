@@ -8,12 +8,12 @@
 #include <stdlib.h>
 #include "dd_task_list.h"
 #include "dd_scheduler.h"
+#include "my_queues.h"
 
 dd_task_list active_list;
 dd_task_list overdue_list;
+dd_task_list completed_list;
 
-		QueueHandle_t scheduler_message_queue;
-		QueueHandle_t monitor_message_queue;
 
 
 void init_dd_scheduler(){
@@ -21,30 +21,108 @@ void init_dd_scheduler(){
 	init_tasklist(&overdue_list); //make an overdue list
 }
 
-		enum
-		{
-			Message_Create,
-			Message_Delete,
-			Message_ActiveList,
-			Message_OverdueList
-
-		}message_type;
-
-
-		typedef struct
-		{
-			message_type 		message_type;
-			TaskHandle_t      message_sender;
-			void*             message_data;
-		}message;
 
 
 		void dd_scheduler(){
 
-			dd_task* task_for_scheduling = NULL;
-			message message_recieved;
+			//dd_task* task_for_scheduling = NULL;
+			uint8_t list_type;
 
-			if( xQueueReceive(scheduler_message_queue, &message_received, 0)){ //if messaged received
+			if( xQueueReceive(xQueueHandle_GetTaskListQueue, &list_type, 1000)){
+
+				if(list_type == active_task_list){
+
+				dd_task_list* list = active_list;
+
+				if(xQueueSend(xQueueHandle_TaskListQueue, &list, 1000)){
+
+				}
+
+
+				}
+
+				if(list_type == completed_task_list){
+
+						dd_task_list* list = completed_list;
+
+							if(xQueueSend(xQueueHandle_TaskListQueue, &list, 1000)){
+
+								}
+
+
+								}
+
+				if(list_type == overdue_task_list){
+
+								dd_task_list* list = overdue_list;
+
+								if(xQueueSend(xQueueHandle_TaskListQueue, &list, 1000)){
+
+								}
+
+
+							}
+
+			}
+
+			create_dd_task_struct new_task;
+
+			//if messaged received
+			if( xQueueReceive(xQueueHandle_CreateDDTaskQueue, &new_task, 1000)){
+
+				dd_task task;
+
+				task.task_type = new_task.type;
+				task.task_id = new_task.task_id;
+				task.task_handle = new_task.t_handle;
+				task.absolute_deadline = new_task.absolute_deadline;
+
+				task.release_time = xTaskGetTickCount();
+
+				if(active_list.head == NULL){
+
+					active_list.head = &task;
+					active_list.tail = &task;
+
+				}else{
+
+
+					   uint32_t deadline = task.absolute_deadline;
+					   dd_task* current = active_list.head;
+					   dd_task* next = active_list;
+
+
+
+					    while (current != NULL) {
+					      previous = current;
+
+
+					      if (current == null) {
+					        break;
+					      }
+
+					     current = curretn.next;
+					      }
+
+					      task.next = current;
+					      previous.nextNode = node;
+					}
+
+
+
+				}
+
+
+
+			}
+
+				uint32_t task_id;
+
+			if( xQueueReceive(xQueueHandle_DeleteDDTaskQueue, &task_id, 1000)){
+
+
+			}
+
 
 
 				// Check input parameters are not NULL
@@ -71,12 +149,7 @@ void init_dd_scheduler(){
 						        	  {
 
 						        	            // This means that delete was called before the timer callback executed.
-						        	            if( (iter->task_type == APERIODIC) && (iter->aperiodic_timer != NULL) )
-						        	            {
-						        	                xTimerStop( iter->aperiodic_timer, 0 );      // Stop the timer
-						        	                xTimerDelete( iter->aperiodic_timer, 0 );    // Delete the timer
-						        	                iter->aperiodic_timer = NULL;                // Clear the timer
-						        	            }
+
 
 
 						        	            if( active_list.length == 1 ) // removing the head and tail of the list.

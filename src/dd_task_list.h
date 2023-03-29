@@ -9,6 +9,9 @@
 #define DD_TASK_LIST_H_
 
 #include <stdint.h>
+#include "FreeRTOS.h"
+#include "timers.h"
+#include "task.h"
 
 typedef enum {
 
@@ -19,7 +22,6 @@ typedef enum {
 
 typedef struct {
 
-	xTimerHandle aperiodic_timer;
 	task_type task_type;
 	TaskHandle_t task_handle;
 	uint32_t task_id;
@@ -28,8 +30,6 @@ typedef struct {
 	uint32_t completion_time;
 	struct dd_task* next;
 	struct dd_task* previous;
-	TickType_t creation_time;
-	TickType_t deadline;
 
 } dd_task;
 
