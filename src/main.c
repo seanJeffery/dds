@@ -250,7 +250,7 @@ void vTimerCallback(TimerHandle_t xTimer) {
 	}
 
 	xQueueSend(xQueueHandle_TimerExpiredQueue, &expired_timer, 1000);
-
+	xTimerStart(xTimer, 1000); // Restart the timer that called this function
 	vTaskResume(xTaskHandle_DDSGenTask);
 };
 
