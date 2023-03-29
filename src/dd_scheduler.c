@@ -21,18 +21,6 @@ void init_dd_scheduler(){
 	init_tasklist(&overdue_list); //make an overdue list
 }
 
-// dd_scheduler
-
-	//clear overdue tasks
-	 //Figure out message type
-	 //Task_Create
-	 //  -> add new element to active list
-	 // Task_Delete
-	 //  -> remove the selected task from the active list (and maybe overdue list????)
-	 //  Active_List & Overdue_List data requests
-	 // -> provide data for the monitor task
-
-
 		enum
 		{
 			Message_Create,
@@ -45,7 +33,7 @@ void init_dd_scheduler(){
 
 		typedef struct
 		{
-			message_type 	message_type;
+			message_type 		message_type;
 			TaskHandle_t      message_sender;
 			void*             message_data;
 		}message;
@@ -66,11 +54,14 @@ void init_dd_scheduler(){
 						return;
 					}else{
 
-						 dd_task* iter = active_list->head; // start from head, closest deadline
+						 dd_task* iter = active_list.head; // start from head
 						 TickType_t current_time = xTaskGetTickCount();     // fetch the current time to check deadline.
 
 						    while( iter != NULL ) //while not at end of list
 						    {
+
+
+
 						        if( iter->deadline < current_time ) // passed the deadline.
 						        {
 						        	// ACTIVE LIST
@@ -82,56 +73,73 @@ void init_dd_scheduler(){
 						        	            // This means that delete was called before the timer callback executed.
 						        	            if( (iter->task_type == APERIODIC) && (iter->aperiodic_timer != NULL) )
 						        	            {
-						        	                xTimerStop( iterator->aperiodic_timer, 0 );      // Stop the timer
-						        	                xTimerDelete( iterator->aperiodic_timer, 0 );    // Delete the timer
+						        	                xTimerStop( iter->aperiodic_timer, 0 );      // Stop the timer
+						        	                xTimerDelete( iter->aperiodic_timer, 0 );    // Delete the timer
 						        	                iter->aperiodic_timer = NULL;                // Clear the timer
 						        	            }
 
 
-						        	            if( active_list->length == 1 ) // removing the head and tail of the list.
+						        	            if( active_list.length == 1 ) // removing the head and tail of the list.
 						        	            {
-						        	                active_list->head = NULL;   // No more items in the list
-						        	                active_list->tail = NULL;
+						        	                active_list.head = NULL;   // No more items in the list
+						        	                active_list.tail = NULL;
 						        	            }
-						        	            else if( iter->task_handle == active_list->head->task_handle ) //Removing the head of the list.
+						        	            else if( iter.task_handle == active_list.head->task_handle ) //Removing the head of the list.
 						        	            {
-						        	               active_list->head = iter->next;      // Make the new head of the list the next item in line
-						        	                iter->next->previous = NULL;         // Ensure the next item in the list points to NULL for anything before it.
+						        	               active_list.head = iter->next;      // Make the new head of the list the next item in line
+						        	                iter.next.previous = NULL;         // Ensure the next item in the list points to NULL for anything before it.
 						        	            }
-						        	            else if( iter->task_handle == active_list->tail->task_handle ) //Removing the tail of the list
+						        	            else if( iter->task_handle == active_list.tail->task_handle ) //Removing the tail of the list
 						        	            {
-						        	                acitve_list->head = iter->previous;  // Make the new tail of the list the previous item in line
-						        	                iter->previous->next = NULL;         // Ensure the previous item in the list points to NULL for anything after it.
+						        	                acitve_list.head = iter->previous;  // Make the new tail of the list the previous item in line
+						        	                iter->previous = NULL;         // Ensure the previous item in the list points to NULL for anything after it.
 						        	            }
 						        	            else // remove from middle of list
 						        	            {
-						        	            	dd_task* temp = iter;
+
 						        	                iter->previous->next = iter->next;
-						        	                iter->nex->previous= iter->previous;
+						        	                iter->next->previous= iter->previous;
 
 						        	            }
 
-						        	            active->length = active->length - 1; // decrement the list size
+						        	            active.length = active.length - 1;
 
 
 						        	            iter->previous = NULL;
 						        	            iter->next = NULL;
 
-
 						        	    }
-
-
-
-
-
 						        }
 
+						    // OVERDUE LIST
 
-						        iter = iter->next_cell;
+						       //add to overdue list
+
+						        if( overdue_list->length == 0 ) //empty
+						                  {
+						                  	overdue_list.length = 1; //lsit length is now 1
+						                  	overdue_list.head = iter;
+						                  	overdue_list.tail = iter;
+						                  }
+						                  else //already things on list
+						                  {
+						                      dd_task* temp = overdue_list->tail;
+						                      overdue_list.tail = iter;
+						                      temp->next = iter;
+						                      iter->previous = temp;
+
+						                      overdue_list.length = overdue_list.length + 1;
+
+						                  }
+
+						     iter = iter->next;
+
 						    }
-
 					}
 
+					//sort active list
+
+					case(Message_Create)
 
 
 
