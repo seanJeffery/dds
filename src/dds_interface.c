@@ -38,14 +38,14 @@ void delete_dd_task(uint32_t task_id) {
 
 }
 
-DD_task_list * get_active_dd_task_list(void) {
+dd_task_list * get_active_dd_task_list(void) {
 
 }
 
-DD_task_list * get_completed_dd_task_list(void) {
+dd_task_list * get_completed_dd_task_list(void) {
 
 }
 
-DD_task_list * get_overdue_dd_task_list(void) {
+dd_task_list * get_overdue_dd_task_list(void) {
 
 }

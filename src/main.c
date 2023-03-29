@@ -148,6 +148,8 @@ functionality.
 #include "../FreeRTOS_Source/include/timers.h"
 /* Other includes */
 #include "dds_interface.h"
+#include "dd_task_list.h"
+#include "dd_scheduler.h"
 
 /*-----------------------------------------------------------*/
 
