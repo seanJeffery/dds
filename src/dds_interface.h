@@ -20,6 +20,12 @@
 
 /* Other includes. */
 
+enum {
+	active_task_list,
+	completed_task_list,
+	overdue_task_list
+};
+
 typedef struct {
 	TaskHandle_t t_handle;
 	task_type type;
