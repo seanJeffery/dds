@@ -11,13 +11,15 @@
 //initialize list values
 void init_tasklist( dd_task_list* list )
 {
-	if( list != NULL ) { //check input is not empty
-		list->length = 0;
-		list->head = NULL;
-		list->tail = NULL;
-	}
-	else{
-//		printf("error: list is empty");
+	if( list != NULL ){ //check input is not empty
+
+    list->length = 0;
+    list->head = NULL;
+    list->tail = NULL;
+
+	}else{
+
+		printf("error: list is empty");
 		return;
 	}
 }

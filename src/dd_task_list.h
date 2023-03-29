@@ -19,11 +19,17 @@ typedef enum {
 
 typedef struct {
 
-	task_type type;
+	xTimerHandle aperiodic_timer;
+	task_type task_type;
+	TaskHandle_t task_handle;
 	uint32_t task_id;
 	uint32_t release_time;
 	uint32_t absolute_deadline;
 	uint32_t completion_time;
+	struct dd_task* next;
+	struct dd_task* previous;
+	TickType_t creation_time;
+	TickType_t deadline;
 
 } dd_task;
 
