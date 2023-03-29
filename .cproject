@@ -42,7 +42,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dds/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/dds/FreeRTOS_Source/portable/GCC/ARM_CM4F}&quot;"/>
 								</option>
-								<option id="com.atollic.truestudio.as.general.preprocess.1840454225" superClass="com.atollic.truestudio.as.general.preprocess" useByScannerDiscovery="false" value="true" valueType="boolean"/>
+								<option id="com.atollic.truestudio.as.general.preprocess.1840454225" name="Preprocess assembler" superClass="com.atollic.truestudio.as.general.preprocess" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<inputType id="com.atollic.truestudio.as.input.1329412985" name="Input" superClass="com.atollic.truestudio.as.input"/>
 							</tool>
 							<tool id="com.atollic.truestudio.exe.debug.toolchain.gcc.773725766" name="C Compiler" superClass="com.atollic.truestudio.exe.debug.toolchain.gcc">
@@ -123,7 +123,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="portable/MemMang/heap_5.c|portable/MemMang/heap_4.c|portable/MemMang/heap_3.c|portable/MemMang/heap_2.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="FreeRTOS_Source"/>
+						<entry excluding="portable/MemMang/heap_1.c|portable/MemMang/heap_5.c|portable/MemMang/heap_3.c|portable/MemMang/heap_2.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="FreeRTOS_Source"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Libraries"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Utilities"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
