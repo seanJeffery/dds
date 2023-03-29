@@ -17,5 +17,6 @@
 #include "queue.h"
 
 extern xQueueHandle xQueueHandle_CreateDDTaskQueue;
+extern xQueueHandle xQueueHandle_DeleteDDTaskQueue;
 
 #endif /* MY_QUEUES_H_ */

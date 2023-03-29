@@ -35,7 +35,7 @@ void create_dd_task( TaskHandle_t t_handle,
 }
 
 void delete_dd_task(uint32_t task_id) {
-
+	xQueueSend(xQueueHandle_DeleteDDTaskQueue, &task_id, 1000);
 }
 
 dd_task_list * get_active_dd_task_list(void) {
