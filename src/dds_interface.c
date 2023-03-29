@@ -17,7 +17,7 @@
 
 extern TaskHandle_t xTaskHandle_DDSTask;
 
-void create_dd_task( TaskHandle_t t_handle,
+void create_dd_task( TaskHandle_t handle,
 					 task_type type,
 					 uint32_t task_id,
 					 uint32_t absolute_deadline
@@ -26,7 +26,7 @@ void create_dd_task( TaskHandle_t t_handle,
 
 	// Build struct to be placed on the create dd task queue
 	create_dd_task_struct dd_task = {
-		t_handle,
+		handle,
 		type,
 		task_id,
 		absolute_deadline
@@ -42,9 +42,9 @@ void delete_dd_task(uint32_t task_id) {
 	vTaskResume(xTaskHandle_DDSTask);
 }
 
-dd_task_list * get_active_dd_task_list(void) {
+dd_task * get_active_dd_task_list(void) {
 	uint8_t list_type = active_task_list;
-	dd_task_list * list;
+	dd_task * list;
 	xQueueSend(xQueueHandle_GetTaskListQueue, &list_type, 1000);
 	vTaskResume(xTaskHandle_DDSTask);
 	if(xQueueReceive(xQueueHandle_TaskListQueue, &list, 1000)) {
@@ -55,9 +55,9 @@ dd_task_list * get_active_dd_task_list(void) {
 	}
 }
 
-dd_task_list * get_completed_dd_task_list(void) {
+dd_task * get_completed_dd_task_list(void) {
 	uint8_t list_type = completed_task_list;
-	dd_task_list * list;
+	dd_task * list;
 	xQueueSend(xQueueHandle_GetTaskListQueue, &list_type, 1000);
 	vTaskResume(xTaskHandle_DDSTask);
 	if(xQueueReceive(xQueueHandle_TaskListQueue, &list, 1000)) {
@@ -68,9 +68,9 @@ dd_task_list * get_completed_dd_task_list(void) {
 	}
 }
 
-dd_task_list * get_overdue_dd_task_list(void) {
+dd_task * get_overdue_dd_task_list(void) {
 	uint8_t list_type = overdue_task_list;
-	dd_task_list * list;
+	dd_task * list;
 	xQueueSend(xQueueHandle_GetTaskListQueue, &list_type, 1000);
 	vTaskResume(xTaskHandle_DDSTask);
 	if(xQueueReceive(xQueueHandle_TaskListQueue, &list, 1000)) {

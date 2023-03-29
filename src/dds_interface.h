@@ -27,7 +27,7 @@ enum {
 };
 
 typedef struct {
-	TaskHandle_t t_handle;
+	TaskHandle_t * handle;
 	task_type type;
 	uint32_t task_id;
 	uint32_t absolute_deadline;
@@ -37,7 +37,7 @@ typedef struct {
  * Assigns a release time to a new DD-task, adds it to the active list,
  * sort the list by the deadline, and set the priorities of the user defined tasks.
  */
-void create_dd_task( TaskHandle_t t_handle,
+void create_dd_task( TaskHandle_t handle,
 					 task_type type,
 					 uint32_t task_id,
 					 uint32_t absolute_deadline
@@ -52,16 +52,16 @@ void delete_dd_task(uint32_t task_id);
 /*
  * Send the active task list to a queue.
  */
-dd_task_list * get_active_dd_task_list(void);
+dd_task * get_active_dd_task_list(void);
 
 /*
  * Send the completed task list to a queue.
  */
-dd_task_list * get_completed_dd_task_list(void);
+dd_task * get_completed_dd_task_list(void);
 
 /*
  * Send the overdue task list to a queue.
  */
-dd_task_list * get_overdue_dd_task_list(void);
+dd_task * get_overdue_dd_task_list(void);
 
 #endif /* DDS_INTERFACE_H */

@@ -177,7 +177,7 @@ static void UserTask2( void *pvParameters );
 /* Periodically creates DD-tasks that are scheduled by the DDS */
 static void DDSGenTask( void *pvParameters );
 
-#define DDS_TASK_PRIO	 	0
+#define DDS_TASK_PRIO	 	5
 #define MONITOR_TASK_PRIO   3
 #define USER0_TASK_PRIO	 	0	// Subject to change by the DDS
 #define USER1_TASK_PRIO	 	0	// Subject to change by the DDS
@@ -223,7 +223,7 @@ static void DDSGenTask( void *pvParameters );
 
 #define CreateDDTaskQueue_QUEUE_LENGTH  4
 #define DeleteDDTaskQueue_QUEUE_LENGTH  4
-#define TimerExpiredQueue_QUEUE_LENGTH  4
+#define TimerExpiredQueue_QUEUE_LENGTH  16
 #define GetTaskListQueue_QUEUE_LENGTH   4
 #define TaskListQueue_QUEUE_LENGTH   	4
 
@@ -270,7 +270,6 @@ int main(void)
 	/* Configure the system ready to run the demo.  The clock configuration
 	can be done here if it was not done before main() was called. */
 	prvSetupHardware();
-	init_dd_scheduler();
 
 	/* Create the queue used by the queue send and queue receive tasks.
 	http://www.freertos.org/a00116.html */
@@ -281,13 +280,13 @@ int main(void)
 											  	   sizeof(uint32_t) );				/* The size of each item the queue holds. */
 
 	xQueueHandle_TimerExpiredQueue = xQueueCreate( TimerExpiredQueue_QUEUE_LENGTH,	/* The number of items the queue can hold. */
-											  	   sizeof(uint8_t) );				/* The size of each item the queue holds. */
+											  	   sizeof(int8_t) );				/* The size of each item the queue holds. */
 
 	xQueueHandle_GetTaskListQueue = xQueueCreate( GetTaskListQueue_QUEUE_LENGTH,	/* The number of items the queue can hold. */
 											  	   sizeof(uint8_t) );				/* The size of each item the queue holds. */
 
 	xQueueHandle_TaskListQueue = xQueueCreate( TaskListQueue_QUEUE_LENGTH,	/* The number of items the queue can hold. */
-											  	   sizeof(dd_task_list *) );
+											  	   sizeof(dd_task *) );
 
 	/* Add to the registry, for the benefit of kernel aware debugging. */
 	vQueueAddToRegistry(xQueueHandle_CreateDDTaskQueue, "CreateDDTaskQueue" );
@@ -354,7 +353,7 @@ static void DDSTask( void *pvParameters )
 {
 	while(1)
 	{
-
+		dds();
 	}
 }
 
@@ -415,38 +414,38 @@ static void DDSGenTask( void *pvParameters )
 	{
 		int8_t expired_timer;
 
-//		if(xQueueReceive(xQueueHandle_TimerExpiredQueue, &expired_timer, 1000)) {
-//
-//			uint32_t release_time = xTaskGetTickCount();
-//			uint32_t absolute_deadline;
-//
-//			uint32_t id = task_id_count++;
-//
-//			xTaskHandle * handle = pvPortMalloc(sizeof(xTaskHandle));
-//
-//			switch(expired_timer) {
-//			case 0: {
-//				xTaskCreate(UserTask0, "UserTask0", configMINIMAL_STACK_SIZE, (void *)(id), USER0_TASK_PRIO, handle);
-//				absolute_deadline = release_time + USER0_PERIOD;
-//				break;
-//			}
-//			case 1: {
-//				xTaskCreate(UserTask1, "UserTask1", configMINIMAL_STACK_SIZE, (void *)(id), USER1_TASK_PRIO, handle);
-//				absolute_deadline = release_time + USER1_PERIOD;
-//				break;
-//			}
-//			case 2: {
-//				xTaskCreate(UserTask2, "UserTask2", configMINIMAL_STACK_SIZE, (void *)(id), USER2_TASK_PRIO, handle);
-//				absolute_deadline = release_time + USER2_PERIOD;
-//				break;
-//			}
-//			default:
-//				break;
-//			}
-//
-//			create_dd_task(*handle, PERIODIC, id, absolute_deadline);
-//
-//		}
+		if(xQueueReceive(xQueueHandle_TimerExpiredQueue, &expired_timer, 0)) {
+
+			uint32_t release_time = xTaskGetTickCount();
+			uint32_t absolute_deadline;
+
+			uint32_t id = task_id_count++;
+
+			xTaskHandle handle;
+
+			switch(expired_timer) {
+			case 0: {
+				xTaskCreate(UserTask0, NULL, configMINIMAL_STACK_SIZE, (void *)(id), USER0_TASK_PRIO, &handle);
+				absolute_deadline = release_time + USER0_PERIOD;
+				break;
+			}
+			case 1: {
+				xTaskCreate(UserTask1, NULL, configMINIMAL_STACK_SIZE, (void *)(id), USER1_TASK_PRIO, &handle);
+				absolute_deadline = release_time + USER1_PERIOD;
+				break;
+			}
+			case 2: {
+				xTaskCreate(UserTask2, NULL, configMINIMAL_STACK_SIZE, (void *)(id), USER2_TASK_PRIO, &handle);
+				absolute_deadline = release_time + USER2_PERIOD;
+				break;
+			}
+			default:
+				break;
+			}
+
+			create_dd_task(handle, PERIODIC, id, absolute_deadline);
+
+		}
 		vTaskSuspend(NULL); // Suspend the generator
 	}
 }
