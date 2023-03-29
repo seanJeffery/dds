@@ -42,6 +42,10 @@ void dds() {
 	if( xQueueReceive(xQueueHandle_DeleteDDTaskQueue, &task_id_to_delete, 0) ) {
 		dd_task * task_to_delete = remove_dd_task(&active_list_head, task_id_to_delete);
 		vTaskDelete(task_to_delete->handle);
+
+		if(active_list_head != 0) {
+			vTaskPrioritySet(active_list_head->handle, 1);
+		}
 		vPortFree(task_to_delete);
 //		append_dd_task(&completed_list_head, task_to_delete);
 	}
@@ -113,10 +117,30 @@ void add_dd_task_sorted(dd_task ** list_head, dd_task ** new_task) {
 //		vTaskSuspend(current_node->handle);
 		vTaskPrioritySet(current_node->handle, 0);
 		// If a node is found with a later absolute deadline
-		if(current_node->absolute_deadline >= (*new_task)->absolute_deadline) {
-			prev_node->next = *new_task;
-			(*new_task)->next = current_node;
+		if(current_node->absolute_deadline > (*new_task)->absolute_deadline) {
+
+			if(current_node == *list_head) {
+				dd_task * temp = *list_head;
+				(*list_head)->next = *new_task;
+				(*new_task)->next = temp;
+			}
+			else {
+				prev_node->next = *new_task;
+				(*new_task)->next = current_node;
+			}
 			return;
+		}
+		else if(current_node->absolute_deadline == (*new_task)->absolute_deadline) {
+			if(current_node == *list_head) {
+				current_node = current_node->next;
+				(*list_head)->next = *new_task;
+				(*new_task)->next = current_node;
+			}
+			else {
+				dd_task * temp = current_node->next;
+				current_node->next = *new_task;
+				(*new_task)->next = temp;
+			}
 		}
 		else {
 			prev_node = current_node;
@@ -130,8 +154,9 @@ dd_task * remove_dd_task(dd_task ** list_head, uint32_t task_id) {
 	dd_task * current_node = *list_head;
 	dd_task * prev_node = *list_head;
 	if(current_node->task_id == task_id) {
+		dd_task * temp = *list_head;
 		*list_head = (*list_head)->next;
-		return *list_head;
+		return temp;
 	}
 	while(current_node != 0) {
 		// If a node is found with a later absolute deadline
@@ -146,6 +171,16 @@ dd_task * remove_dd_task(dd_task ** list_head, uint32_t task_id) {
 	}
 	// No match found
 	return 0;
+}
+
+uint32_t count_list_elements(dd_task ** list_head) {
+	uint32_t i = 0;
+	dd_task * temp = *list_head;
+	while(temp != 0) {
+		i++;
+		temp = temp->next;
+	}
+	return i;
 }
 
 //void sort_dd_task_list(dd_task * list_head) {

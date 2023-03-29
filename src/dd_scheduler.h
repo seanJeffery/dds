@@ -22,6 +22,7 @@ dd_task * remove_dd_task(dd_task ** list_head, uint32_t task_id);
 /*  */
 void add_dd_task_sorted(dd_task ** list_head, dd_task ** new_task);
 
+uint32_t count_list_elements(dd_task ** list_head);
 
 /* Sort a linked list of tasks by earliest deadline first */
 //void sort_dd_task_list();

@@ -299,7 +299,7 @@ int main(void)
 	xTaskCreate(MonitorTask, "MonitorTask", configMINIMAL_STACK_SIZE, NULL, MONITOR_TASK_PRIO, NULL);
 	xTaskCreate(DDSGenTask , "DDSGenTask" , configMINIMAL_STACK_SIZE, NULL, DDSGEN_TASK_PRIO , &xTaskHandle_DDSGenTask);
 
-	vTaskSuspend(xTaskHandle_DDSGenTask);
+//	vTaskSuspend(xTaskHandle_DDSGenTask);
 	vTaskSuspend(xTaskHandle_DDSTask);
 
 	xTimerHandle_User0Timer = xTimerCreate("User0Timer", USER0_PERIOD, pdFALSE, 0, vTimerCallback);
@@ -309,6 +309,15 @@ int main(void)
 	xTimerStart(xTimerHandle_User0Timer, 1000);
 	xTimerStart(xTimerHandle_User1Timer, 1000);
 	xTimerStart(xTimerHandle_User2Timer, 1000);
+
+	int8_t expired_timer = 0;
+	xQueueSend(xQueueHandle_TimerExpiredQueue, &expired_timer, 1000);
+
+	expired_timer = 1;
+	xQueueSend(xQueueHandle_TimerExpiredQueue, &expired_timer, 1000);
+
+	expired_timer = 2;
+	xQueueSend(xQueueHandle_TimerExpiredQueue, &expired_timer, 1000);
 
 	/* Start the tasks and timer running. */
 	vTaskStartScheduler();
@@ -329,19 +338,24 @@ static void MonitorTask( void *pvParameters )
 	while(1)
 	{
 
-//		dd_task_list * active	 = get_active_dd_task_list();
-//		dd_task_list * completed = get_completed_dd_task_list();
-//		dd_task_list * overdue 	 = get_overdue_dd_task_list();
-
-		int num_active_tasks	 = 0;
-		int num_completed_tasks  = 0;
-		int num_overdue_tasks 	 = 0;
-
-		// Iterate through each dd_task_list and count them
-		printf("\n=========== MONITOR ===========\n");
-		printf("# active   : %d\n", num_active_tasks);
-		printf("# completed: %d\n", num_completed_tasks);
-		printf("# overdue  : %d\n", num_overdue_tasks);
+//		dd_task * active	= get_active_dd_task_list();
+//		dd_task * completed = get_completed_dd_task_list();
+//		dd_task * overdue 	= get_overdue_dd_task_list();
+//
+//		uint32_t num_active_tasks	 = 0;
+//		uint32_t num_completed_tasks  = 0;
+//		uint32_t num_overdue_tasks 	 = 0;
+//
+//		num_active_tasks = count_list_elements(&active);
+//		num_completed_tasks = count_list_elements(&completed);
+//		num_overdue_tasks = count_list_elements(&overdue);
+//
+//		// Iterate through each dd_task_list and count them
+//		printf("\n=========== MONITOR ===========\n");
+//		printf("# active   : %u\n", (unsigned int)num_active_tasks);
+//		printf("# completed: %u\n", (unsigned int)num_completed_tasks);
+//		printf("# overdue  : %u\n", (unsigned int)num_overdue_tasks);
+//		printf("================================\n");
 
 		vTaskDelayUntil( &xLastWakeTime, xFrequency );
 	}
@@ -365,8 +379,8 @@ static void UserTask0( void *pvParameters )
 	{
 		/* Spin in an empty loop for the execution time */
 		TickType_t start_ticks = xTaskGetTickCount();
-		while( (TickType_t)(start_ticks - xTaskGetTickCount()) < USER0_EXEC_TIME );
-
+		while( (TickType_t)(xTaskGetTickCount() - start_ticks) < USER0_EXEC_TIME );
+		printf("User0 finished at t = %u\n", (unsigned int)xTaskGetTickCount());
 		/* Dereference pvParameters to get the dd task id that was passed to this function */
 		uint32_t dd_task_id = (uint32_t)pvParameters;
 		delete_dd_task(dd_task_id);
@@ -381,8 +395,8 @@ static void UserTask1( void *pvParameters )
 	{
 		/* Spin in an empty loop for the execution time */
 		TickType_t start_ticks = xTaskGetTickCount();
-		while( (TickType_t)(start_ticks - xTaskGetTickCount()) < USER1_EXEC_TIME );
-
+		while( (TickType_t)(xTaskGetTickCount() - start_ticks) < USER1_EXEC_TIME );
+		printf("User1 finished at t = %u\n", (unsigned int)xTaskGetTickCount());
 		/* Dereference pvParameters to get the dd task id that was passed to this function */
 		uint32_t dd_task_id = (uint32_t)pvParameters;
 		delete_dd_task(dd_task_id);
@@ -397,8 +411,8 @@ static void UserTask2( void *pvParameters )
 	{
 		/* Spin in an empty loop for the execution time */
 		TickType_t start_ticks = xTaskGetTickCount();
-		while( (TickType_t)(start_ticks - xTaskGetTickCount()) < USER2_EXEC_TIME );
-
+		while( (TickType_t)(xTaskGetTickCount() - start_ticks) < USER2_EXEC_TIME );
+		printf("User2 finished at t = %u\n", (unsigned int)xTaskGetTickCount());
 		/* Dereference pvParameters to get the dd task id that was passed to this function */
 		uint32_t dd_task_id = (uint32_t)pvParameters;
 		delete_dd_task(dd_task_id);
@@ -409,33 +423,34 @@ static void UserTask2( void *pvParameters )
 
 static void DDSGenTask( void *pvParameters )
 {
-	static uint32_t task_id_count = 0; // Iterated every time a dd task is created to make a new id
+	static uint32_t task_id_count = 22; // Iterated every time a dd task is created to make a new id
 	while(1)
 	{
 		int8_t expired_timer;
 
-		if(xQueueReceive(xQueueHandle_TimerExpiredQueue, &expired_timer, 0)) {
+		while(xQueueReceive(xQueueHandle_TimerExpiredQueue, &expired_timer, 0)) {
 
-			uint32_t release_time = xTaskGetTickCount();
 			uint32_t absolute_deadline;
-
 			uint32_t id = task_id_count++;
-
 			xTaskHandle handle;
+			uint32_t release_time = xTaskGetTickCount();
 
 			switch(expired_timer) {
 			case 0: {
-				xTaskCreate(UserTask0, NULL, configMINIMAL_STACK_SIZE, (void *)(id), USER0_TASK_PRIO, &handle);
+				xTaskCreate(UserTask0, "User0", configMINIMAL_STACK_SIZE, (void *)(id), USER0_TASK_PRIO, &handle);
+				printf("User0 release at t = %u\n", (unsigned int)release_time);
 				absolute_deadline = release_time + USER0_PERIOD;
 				break;
 			}
 			case 1: {
-				xTaskCreate(UserTask1, NULL, configMINIMAL_STACK_SIZE, (void *)(id), USER1_TASK_PRIO, &handle);
+				xTaskCreate(UserTask1, "User1", configMINIMAL_STACK_SIZE, (void *)(id), USER1_TASK_PRIO, &handle);
+				printf("User1 release at t = %u\n", (unsigned int)release_time);
 				absolute_deadline = release_time + USER1_PERIOD;
 				break;
 			}
 			case 2: {
-				xTaskCreate(UserTask2, NULL, configMINIMAL_STACK_SIZE, (void *)(id), USER2_TASK_PRIO, &handle);
+				xTaskCreate(UserTask2, "User2", configMINIMAL_STACK_SIZE, (void *)(id), USER2_TASK_PRIO, &handle);
+				printf("User2 release at t = %u\n", (unsigned int)release_time);
 				absolute_deadline = release_time + USER2_PERIOD;
 				break;
 			}
