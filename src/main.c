@@ -178,8 +178,8 @@ static void DDSGenTask( void *pvParameters );
 #define DDS_TASK_PRIO	 	5
 #define MONITOR_TASK_PRIO   3
 #define USER0_TASK_PRIO	 	0	// Subject to change by the DDS
-#define USER1_TASK_PRIO	 	1	// Subject to change by the DDS
-#define USER2_TASK_PRIO	 	2	// Subject to change by the DDS
+#define USER1_TASK_PRIO	 	0	// Subject to change by the DDS
+#define USER2_TASK_PRIO	 	0	// Subject to change by the DDS
 #define DDSGEN_TASK_PRIO  	4
 
 // Uncomment one of these to try different testbenches
@@ -277,10 +277,9 @@ int main(void)
 
 	xTaskCreate(DDSTask	   , "DDSTask"	  , configMINIMAL_STACK_SIZE, NULL, DDS_TASK_PRIO	 , NULL);
 	xTaskCreate(MonitorTask, "MonitorTask", configMINIMAL_STACK_SIZE, NULL, MONITOR_TASK_PRIO, NULL);
-//	xTaskCreate(UserTask0  , "UserTask0"  , configMINIMAL_STACK_SIZE, NULL, USER0_TASK_PRIO	 , NULL);
-//	xTaskCreate(UserTask1  , "UserTask1"  , configMINIMAL_STACK_SIZE, NULL, USER1_TASK_PRIO	 , NULL);
-//	xTaskCreate(UserTask2  , "UserTask2"  , configMINIMAL_STACK_SIZE, NULL, USER2_TASK_PRIO	 , NULL);
-	xTaskCreate(DDSGenTask , "DDSGenTask" , configMINIMAL_STACK_SIZE, NULL, DDSGEN_TASK_PRIO , xTaskHandle_DDSGenTask);
+	xTaskCreate(DDSGenTask , "DDSGenTask" , configMINIMAL_STACK_SIZE, NULL, DDSGEN_TASK_PRIO , &xTaskHandle_DDSGenTask);
+
+	vTaskSuspend(xTaskHandle_DDSGenTask);
 
 	xTimerHandle_User0Timer = xTimerCreate("User0Timer", USER0_PERIOD, pdFALSE, 0, vTimerCallback);
 	xTimerHandle_User1Timer = xTimerCreate("User1Timer", USER1_PERIOD, pdFALSE, 0, vTimerCallback);
