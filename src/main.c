@@ -185,8 +185,8 @@ static void DDSGenTask( void *pvParameters );
 #define DDSGEN_TASK_PRIO  	4
 
 // Uncomment one of these to try different testbenches
-#define TB1
-//#define TB2
+//#define TB1
+#define TB2
 //#define TB3
 
 #ifdef TB1
@@ -338,24 +338,29 @@ static void MonitorTask( void *pvParameters )
 	while(1)
 	{
 
-//		dd_task * active	= get_active_dd_task_list();
-//		dd_task * completed = get_completed_dd_task_list();
-//		dd_task * overdue 	= get_overdue_dd_task_list();
-//
-//		uint32_t num_active_tasks	 = 0;
-//		uint32_t num_completed_tasks  = 0;
-//		uint32_t num_overdue_tasks 	 = 0;
-//
-//		num_active_tasks = count_list_elements(&active);
-//		num_completed_tasks = count_list_elements(&completed);
-//		num_overdue_tasks = count_list_elements(&overdue);
-//
-//		// Iterate through each dd_task_list and count them
-//		printf("\n=========== MONITOR ===========\n");
-//		printf("# active   : %u\n", (unsigned int)num_active_tasks);
-//		printf("# completed: %u\n", (unsigned int)num_completed_tasks);
-//		printf("# overdue  : %u\n", (unsigned int)num_overdue_tasks);
-//		printf("================================\n");
+		dd_task * active	= get_active_dd_task_list();
+		dd_task * completed = get_completed_dd_task_list();
+		dd_task * overdue 	= get_overdue_dd_task_list();
+
+		uint32_t num_active_tasks	 = 0;
+		uint32_t num_completed_tasks  = 0;
+		uint32_t num_overdue_tasks 	 = 0;
+
+		num_active_tasks = count_list_elements(&active);
+		num_completed_tasks = count_list_elements(&completed);
+		num_overdue_tasks = count_list_elements(&overdue);
+
+		// Iterate through each dd_task_list and count them
+		printf("\n=========== MONITOR ===========\n");
+		printf("# active   : %u\n", (unsigned int)num_active_tasks);
+		printf("# completed: %u\n", (unsigned int)num_completed_tasks);
+		printf("# overdue  : %u\n", (unsigned int)num_overdue_tasks);
+		printf("================================\n");
+
+		if(xTaskGetTickCount() > 1500) {
+			printf("\nt = 1500. I'm done.\n");
+			while(1);
+		}
 
 		vTaskDelayUntil( &xLastWakeTime, xFrequency );
 	}

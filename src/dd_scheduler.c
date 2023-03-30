@@ -20,6 +20,16 @@ dd_task * overdue_list_head = 0;
 
 void dds() {
 
+	dd_task * overdue_task = find_overdue_dd_task(&active_list_head);
+	if(overdue_task) {
+		vTaskDelete(overdue_task->handle);
+		if(active_list_head != 0) {
+			vTaskPrioritySet(active_list_head->handle, 1);
+		}
+//		vPortFree(task_to_delete);
+		append_dd_task(&overdue_list_head, overdue_task);
+	}
+
 	/****** Create Task message ******/
 	create_dd_task_struct new_task;
 
@@ -46,8 +56,8 @@ void dds() {
 		if(active_list_head != 0) {
 			vTaskPrioritySet(active_list_head->handle, 1);
 		}
-		vPortFree(task_to_delete);
-//		append_dd_task(&completed_list_head, task_to_delete);
+//		vPortFree(task_to_delete);
+		append_dd_task(&completed_list_head, task_to_delete);
 	}
 
 
@@ -111,43 +121,34 @@ void add_dd_task_sorted(dd_task ** list_head, dd_task ** new_task) {
 		*list_head = *new_task;
 		return;
 	}
-	dd_task * current_node = *list_head;
+	dd_task * node = *list_head;
 	dd_task * prev_node = *list_head;
-	while(current_node != 0) {
-//		vTaskSuspend(current_node->handle);
-		vTaskPrioritySet(current_node->handle, 0);
-		// If a node is found with a later absolute deadline
-		if(current_node->absolute_deadline > (*new_task)->absolute_deadline) {
+	while(node != 0) {
+		vTaskPrioritySet(node->handle, 0);
 
-			if(current_node == *list_head) {
-				dd_task * temp = *list_head;
-				(*list_head)->next = *new_task;
-				(*new_task)->next = temp;
+		if(node->absolute_deadline <= (*new_task)->absolute_deadline) {
+			if(node->next == 0) { // End of list
+				node->next = *new_task;
+				return;
 			}
 			else {
-				prev_node->next = *new_task;
-				(*new_task)->next = current_node;
-			}
-			return;
-		}
-		else if(current_node->absolute_deadline == (*new_task)->absolute_deadline) {
-			if(current_node == *list_head) {
-				current_node = current_node->next;
-				(*list_head)->next = *new_task;
-				(*new_task)->next = current_node;
-			}
-			else {
-				dd_task * temp = current_node->next;
-				current_node->next = *new_task;
-				(*new_task)->next = temp;
+				prev_node = node;
+				node = node->next;
 			}
 		}
 		else {
-			prev_node = current_node;
-			current_node = current_node->next;
+			if(prev_node != node) {
+				prev_node->next = *new_task;
+				(*new_task)->next = node;
+				return;
+			}
+			else {
+				(*new_task)->next = *list_head;
+				*list_head = *new_task;
+				return;
+			}
 		}
 	}
-	prev_node->next = *new_task; // Task landed at the end of the list
 }
 
 dd_task * remove_dd_task(dd_task ** list_head, uint32_t task_id) {
@@ -161,6 +162,29 @@ dd_task * remove_dd_task(dd_task ** list_head, uint32_t task_id) {
 	while(current_node != 0) {
 		// If a node is found with a later absolute deadline
 		if(current_node->task_id == task_id) {
+			prev_node->next = current_node->next;
+			return current_node;
+		}
+		else {
+			prev_node = current_node;
+			current_node = current_node->next;
+		}
+	}
+	// No match found
+	return 0;
+}
+
+dd_task * find_overdue_dd_task(dd_task ** list_head) {
+	dd_task * current_node = *list_head;
+	dd_task * prev_node = *list_head;
+	if(current_node->absolute_deadline < xTaskGetTickCount()) {
+		dd_task * temp = *list_head;
+		*list_head = (*list_head)->next;
+		return temp;
+	}
+	while(current_node != 0) {
+		// If a node is found with a later absolute deadline
+		if(current_node->absolute_deadline < xTaskGetTickCount()) {
 			prev_node->next = current_node->next;
 			return current_node;
 		}

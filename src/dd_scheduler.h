@@ -19,6 +19,8 @@ void append_dd_task(dd_task ** list_head, dd_task * new_task);
 /* Remove a task from a linked list */
 dd_task * remove_dd_task(dd_task ** list_head, uint32_t task_id);
 
+dd_task * find_overdue_dd_task(dd_task ** list_head);
+
 /*  */
 void add_dd_task_sorted(dd_task ** list_head, dd_task ** new_task);
 
